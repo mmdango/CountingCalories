@@ -3,5 +3,10 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
-    <string name="enter_calories_hint">Enter calories consumed:</string>
+    <string name="amount_hint">Amount</string>
+    <string name="label_hint">Label</string>
+    <string name="breakfast">Breakfast</string>
+    <string name="lunch">Lunch</string>
+    <string name="dinner">Dinner</string>
+    <string name="add_entry">Add entry</string>
 </resources>

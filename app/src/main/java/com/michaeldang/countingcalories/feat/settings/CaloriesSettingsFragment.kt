@@ -1,21 +1,18 @@
-package com.michaeldang.countingcalories
+package com.michaeldang.countingcalories.feat.settings
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.michaeldang.countingcalories.R
 
-class CaloriesDashboardFragment() : Fragment() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
+class CaloriesSettingsFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.dashboard_fragment, container, false)
+        return inflater.inflate(R.layout.settings_fragment, container, false)
     }
 }
