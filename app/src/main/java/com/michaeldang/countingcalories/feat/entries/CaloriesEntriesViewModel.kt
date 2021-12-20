@@ -107,7 +107,7 @@ class CaloriesEntriesViewModel(application: Application) : AndroidViewModel(appl
 
     fun setTotalCalories(totalCalories: Int) {
         mutableTotalCalories.value = totalCalories
-        sharedPrefs.edit().putInt(totalCaloriesKey, totalCalories)
+        sharedPrefs.edit().putInt(totalCaloriesKey, totalCalories).apply()
     }
 
     fun prevDate() {
