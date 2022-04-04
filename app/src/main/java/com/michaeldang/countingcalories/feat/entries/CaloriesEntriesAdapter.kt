@@ -27,7 +27,7 @@ class CaloriesEntriesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return if (viewType == Entry) {
+        return if (viewType == RowType.Entry.id) {
             CaloriesEntriesViewHolder(
                 LayoutInflater.from(parent.context).inflate(
                     R.layout.entries_view_holder,
@@ -47,11 +47,14 @@ class CaloriesEntriesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (entries[position] is CaloriesEntriesEntityDummy) FoodPeriodLabel else Entry
+        return if (entries[position] is CaloriesEntriesEntityDummy) RowType.FoodPeriodLabel.id else RowType.Entry.id
     }
 
-    val Entry = 0
-    val FoodPeriodLabel = 1
+
+    enum class RowType(val id: Int) {
+        Entry(0),
+        FoodPeriodLabel(1)
+    }
 
     override fun getItemCount(): Int {
         return entries.size

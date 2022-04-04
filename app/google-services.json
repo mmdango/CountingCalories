@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "450732196828",
+    "project_id": "countingcalories-6fba0",
+    "storage_bucket": "countingcalories-6fba0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:450732196828:android:2bc630d3bb8b8337fec519",
+        "android_client_info": {
+          "package_name": "com.michaeldang.countingcalories"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "450732196828-rlf6t9o39kiapoft3r6hptjkaa356mu0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyABqpflJMO99K-DEWEarNfybt3GIG5t5hM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "450732196828-rlf6t9o39kiapoft3r6hptjkaa356mu0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
