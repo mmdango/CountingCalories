@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:padding="4dp"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/calorieEntryView"
+            android:hint="@string/amount_hint"
+            android:inputType="number"
+            android:layout_margin="4dp"
+            android:imeOptions="actionNext"
+            android:layout_width="0dp"
+            android:layout_weight="2"
+            android:layout_height="wrap_content" />
+
+        <EditText
+            android:id="@+id/calorieLabelView"
+            android:hint="@string/label_hint"
+            android:inputType="text"
+            android:imeOptions="actionDone"
+            android:layout_margin="4dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/confirmButton"
+            android:background="@drawable/radio_text_view_selector"
+            android:text="@string/add_entry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+    <!-- TODO: make this into custom view with CheckedTextView instead so you can use elevation-->
+    <RadioGroup
+        android:id="@+id/bodyPartRadioGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <RadioButton
+            android:id="@+id/thighSelector"
+            android:layout_height="wrap_content"
+            android:minHeight="20dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:layout_marginEnd="4dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:elevation="4dp"
+            android:background="@drawable/radio_text_view_selector"
+            android:button="@null"
+            android:text="@string/thigh"
+            android:textSize="16sp" />
+
+        <RadioButton
+            android:id="@+id/waistSelector"
+            android:layout_height="wrap_content"
+            android:minHeight="20dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_margin="4dp"
+            android:elevation="4dp"
+            android:text="@string/waist"
+            android:gravity="center"
+            android:background="@drawable/radio_text_view_selector"
+            android:button="@null"
+            android:textSize="16sp" />
+
+        <RadioButton
+            android:id="@+id/bicepSelector"
+            android:layout_height="wrap_content"
+            android:minHeight="20dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:elevation="4dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:text="@string/bicep"
+            android:gravity="center"
+            android:background="@drawable/radio_text_view_selector"
+            android:button="@null"
+            android:textSize="16sp" />
+    </RadioGroup>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/thighMeasurements"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/waistMeasurements"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/bicepMeasurements"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+
+</LinearLayout>
