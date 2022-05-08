@@ -19,6 +19,9 @@ abstract class MeasurementsDao {
     @Query("SELECT * FROM MeasurementsEntity WHERE date = :date AND body_part = 'Bicep'")
     abstract fun getBicepMeasurementsForDate(date: LocalDate): List<MeasurementsEntity>
 
+    @Query("SELECT * FROM MeasurementPhotoEntity WHERE date = :date")
+    abstract fun getMeasurementPhotoForDate(date: LocalDate): List<MeasurementPhotoEntity>
+
     @Insert
     abstract fun insertEntry(entry: MeasurementsEntity)
 }

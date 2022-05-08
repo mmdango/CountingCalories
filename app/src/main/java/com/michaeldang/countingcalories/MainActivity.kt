@@ -7,6 +7,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import com.michaeldang.countingcalories.feat.dashboard.CaloriesDashboardFragment
 import com.michaeldang.countingcalories.feat.entries.CaloriesEntriesFragment
+import com.michaeldang.countingcalories.feat.measurements.MeasurementsFragment
 import com.michaeldang.countingcalories.feat.settings.CaloriesSettingsFragment
 
 class MainActivity : AppCompatActivity() {
@@ -25,9 +26,9 @@ class MainActivity : AppCompatActivity() {
                 ).commit()
                 return@OnNavigationItemSelectedListener true
             }
-            R.id.navigation_notifications -> {
+            R.id.navigation_measurements -> {
                 supportFragmentManager.beginTransaction().replace(R.id.frame_layout,
-                    CaloriesSettingsFragment()
+                    MeasurementsFragment()
                 ).commit()
                 return@OnNavigationItemSelectedListener true
             }

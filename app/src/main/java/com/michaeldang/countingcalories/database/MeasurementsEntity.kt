@@ -13,3 +13,10 @@ open class MeasurementsEntity(
     @ColumnInfo(name = "body_part") val bodyPart: String?,
     @ColumnInfo(name = "size") val size: Int,
 )
+
+@Entity
+open class MeasurementPhotoEntity(
+    @PrimaryKey(autoGenerate = true) val uid: Int,
+    @ColumnInfo(name = "date") val date: LocalDate,
+    @ColumnInfo(name = "storage_key") val storageKey: String,
+)

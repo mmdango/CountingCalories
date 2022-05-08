@@ -5,8 +5,8 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.michaeldang.countingcalories.database.typeconverters.DateTypeConverter
 
-@Database(entities = [MeasurementsEntity::class], version = 1, exportSchema = false)
+@Database(entities = [MeasurementsEntity::class, MeasurementPhotoEntity::class], version = 1, exportSchema = false)
 @TypeConverters(DateTypeConverter::class)
 abstract class MeasurementsDatabase : RoomDatabase() {
-    abstract fun caloriesDao() : CaloriesDao
+    abstract fun measurementsDao() : MeasurementsDao
 }
