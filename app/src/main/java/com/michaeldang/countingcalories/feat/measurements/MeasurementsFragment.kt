@@ -26,14 +26,15 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
+import com.michaeldang.countingcalories.PreferencesImpl
 import com.michaeldang.countingcalories.R
+import com.michaeldang.countingcalories.fstorage.CloudStorageImpl
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 class MeasurementsFragment : Fragment() {
-    // TODO: Dagger
-    val storage = Firebase.storage
+
     private var imageCapture: ImageCapture? = null
     private lateinit var cameraExecutor: ExecutorService
 
@@ -165,20 +166,22 @@ class MeasurementsFragment : Fragment() {
         uploadTask.addOnFailureListener { exception ->
             Toast.makeText(requireContext(), exception.message, Toast.LENGTH_SHORT).show()
         }.addOnSuccessListener { snapshot ->
-            Toast.makeText(requireContext(), "Success", Toast.LENGTH_SHORT).show()
+            context?.let {
+                Toast.makeText(it, "Success", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
-    fun createPhotoRef(fileName: String): StorageReference {
-        var storageRef = storage.reference
-        // Create a child reference
-        // imagesRef now points to "images"
-        var imagesRef: StorageReference? = storageRef.child("images")
+    fun getUserId(): String? {
+        return PreferencesImpl.getUserId(requireContext())
+    }
 
+    fun createPhotoRef(fileName: String): StorageReference {
+        var storageRef = CloudStorageImpl.storage.reference
         // Child references can also take paths
         // spaceRef now points to "images/space.jpg
         // imagesRef still points to "images"
-        return storageRef.child("images/$fileName.jpg")
+        return storageRef.child("images/${getUserId()}/$fileName.jpg")
     }
 
     companion object {
