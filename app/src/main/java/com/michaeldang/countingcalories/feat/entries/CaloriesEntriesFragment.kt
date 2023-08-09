@@ -13,8 +13,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
-import com.michaeldang.countingcalories.R
-import kotlinx.android.synthetic.main.entries_fragment.*
+import com.michaeldang.countingcalories.databinding.EntriesFragmentBinding
 import java.time.format.DateTimeFormatter
 
 class CaloriesEntriesFragment : Fragment() {
@@ -24,53 +23,64 @@ class CaloriesEntriesFragment : Fragment() {
     lateinit var dinnerAdapter: CaloriesEntriesAdapter
 
     private val viewModel: CaloriesEntriesViewModel by activityViewModels()
-
+    private var _binding: EntriesFragmentBinding? = null
+    // This property is only valid between onCreateView and
+    // onDestroyView.
+    private val binding get() = _binding!!
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? = inflater.inflate(R.layout.entries_fragment, container, false)
+    ): View {
+        _binding = EntriesFragmentBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        caloriesTotalView.isClickable = true
-        caloriesTotalView.setOnLongClickListener {
+        binding.caloriesTotalView.isClickable = true
+        binding.caloriesTotalView.setOnLongClickListener {
             childFragmentManager.beginTransaction().add(TotalCaloriesDialogFragment(), "total_calories").commit()
             true
         }
 
         viewModel.dateLiveData().observe(viewLifecycleOwner, Observer { date ->
-            currentDateView.text = date.format(DateTimeFormatter.ofPattern("EE, MMM d"))
-            prevDateButton.text = date.minusDays(1).format(DateTimeFormatter.ofPattern("EE"))
-            nextDateButton.text = date.plusDays(1).format(DateTimeFormatter.ofPattern("EE"))
+            binding.currentDateView.text = date.format(DateTimeFormatter.ofPattern("EE, MMM d"))
+            binding.prevDateButton.text = date.minusDays(1).format(DateTimeFormatter.ofPattern("EE"))
+            binding.nextDateButton.text = date.plusDays(1).format(DateTimeFormatter.ofPattern("EE"))
             viewModel.fetchEntries(date)
         })
 
         viewModel.breakfastCaloriesLiveData().observe(viewLifecycleOwner, Observer { entries ->
             breakfastAdapter.setEntries(entries)
-            caloriesTotalView.text = viewModel.getTotalCaloriesFractionText()
+            binding.caloriesTotalView.text = viewModel.getTotalCaloriesFractionText()
         })
 
         viewModel.lunchCaloriesLiveData().observe(viewLifecycleOwner, Observer { entries ->
             lunchAdapter.setEntries(entries)
-            caloriesTotalView.text = viewModel.getTotalCaloriesFractionText()
+            binding.caloriesTotalView.text = viewModel.getTotalCaloriesFractionText()
         })
 
         viewModel.dinnerCaloriesLiveData().observe(viewLifecycleOwner, Observer { entries ->
             dinnerAdapter.setEntries(entries)
-            caloriesTotalView.text = viewModel.getTotalCaloriesFractionText()
+            binding.caloriesTotalView.text = viewModel.getTotalCaloriesFractionText()
         })
 
         viewModel.totalCaloriesLiveData().observe(viewLifecycleOwner, Observer { _ ->
-            caloriesTotalView.text = viewModel.getTotalCaloriesFractionText()
+            binding.caloriesTotalView.text = viewModel.getTotalCaloriesFractionText()
         })
 
-        prevDateButton.setOnClickListener { loadPrevDate() }
-        nextDateButton.setOnClickListener { loadNextDate() }
+        binding.prevDateButton.setOnClickListener { loadPrevDate() }
+        binding.nextDateButton.setOnClickListener { loadNextDate() }
 
-        confirmButton.setOnClickListener {
+        binding.confirmButton.setOnClickListener {
             storeEntry()
         }
-        calorieLabelView.setOnEditorActionListener { _, actionId, _ ->
+        binding.calorieLabelView.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 storeEntry()
                 true
@@ -80,15 +90,15 @@ class CaloriesEntriesFragment : Fragment() {
         }
 
         breakfastAdapter = CaloriesEntriesAdapter()
-        breakfastCaloriesView.adapter = breakfastAdapter
-        breakfastCaloriesView.layoutManager = LinearLayoutManager(context)
+        binding.breakfastCaloriesView.adapter = breakfastAdapter
+        binding.breakfastCaloriesView.layoutManager = LinearLayoutManager(context)
 
         lunchAdapter = CaloriesEntriesAdapter()
-        lunchCaloriesView.adapter = lunchAdapter
-        lunchCaloriesView.layoutManager = LinearLayoutManager(context)
+        binding.lunchCaloriesView.adapter = lunchAdapter
+        binding.lunchCaloriesView.layoutManager = LinearLayoutManager(context)
         dinnerAdapter = CaloriesEntriesAdapter()
-        dinnerCaloriesView.adapter = dinnerAdapter
-        dinnerCaloriesView.layoutManager = LinearLayoutManager(context)
+        binding.dinnerCaloriesView.adapter = dinnerAdapter
+        binding.dinnerCaloriesView.layoutManager = LinearLayoutManager(context)
     }
 
     private fun storeEntry() {
@@ -96,12 +106,12 @@ class CaloriesEntriesFragment : Fragment() {
             Snackbar.make(view ?: return, "Must select a meal period and enter calorie amount.", Snackbar.LENGTH_SHORT).show()
             return
         }
-        val label = calorieLabelView.text.toString()
-        val calories = Integer.valueOf(calorieEntryView.text.toString())
+        val label = binding.calorieLabelView.text.toString()
+        val calories = Integer.valueOf(binding.calorieEntryView.text.toString())
         val foodPeriod = CaloriesEntriesViewModel.FoodPeriod.valueOf(checkedFoodPeriod())
         viewModel.storeEntry(label, calories, foodPeriod)
-        calorieEntryView.text = null
-        calorieLabelView.text = null
+        binding.calorieEntryView.text = null
+        binding.calorieLabelView.text = null
         val imm: InputMethodManager = context
             ?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view?.windowToken, 0)
@@ -109,12 +119,12 @@ class CaloriesEntriesFragment : Fragment() {
     }
 
     private fun canAddEntry(): Boolean {
-        return foodPeriodRadioGroup.checkedRadioButtonId != -1 && calorieEntryView.text.isNotBlank()
+        return binding.foodPeriodRadioGroup.checkedRadioButtonId != -1 && binding.calorieEntryView.text.isNotBlank()
     }
 
     private fun checkedFoodPeriod(): String {
-        return foodPeriodRadioGroup
-            .findViewById<RadioButton>(foodPeriodRadioGroup.checkedRadioButtonId)
+        return binding.foodPeriodRadioGroup
+            .findViewById<RadioButton>(binding.foodPeriodRadioGroup.checkedRadioButtonId)
             .text
             .toString()
     }
