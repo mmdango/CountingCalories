@@ -62,8 +62,10 @@ class CaloriesEntriesViewModel(application: Application) : AndroidViewModel(appl
         } else {
             "<font color='red'>"
         }
+
+        val remainingCalories = totalCalories - totalConsumedCalories
         return Html.fromHtml(
-            "$consumedCaloriesTextColor$totalConsumedCalories</font> / <font color='black'>$totalCalories Calories remaining</font>",
+            "$consumedCaloriesTextColor$totalConsumedCalories</font> / <font color='black'>$totalCalories calories<br>$remainingCalories remaining</font>",
             Html.FROM_HTML_MODE_COMPACT
         )
     }
@@ -79,6 +81,12 @@ class CaloriesEntriesViewModel(application: Application) : AndroidViewModel(appl
                 foodPeriod
             )
         )
+        fetchEntries(date)
+    }
+
+    fun removeEntry(entry: CaloriesEntriesEntity) = coroutineScope.launch{
+        caloriesDao.removeEntry(entry)
+        val date = dateLiveData().value ?: LocalDate.now()
         fetchEntries(date)
     }
 
@@ -122,9 +130,5 @@ class CaloriesEntriesViewModel(application: Application) : AndroidViewModel(appl
         Breakfast(LocalTime.MIDNIGHT, LocalTime.of(10,30)),
         Lunch(LocalTime.of(10,31), LocalTime.of(15,0)),
         Dinner(LocalTime.of(15, 1), LocalTime.MAX);
-
-        companion object {
-            val FOOD_PERIODS = listOf(Breakfast, Lunch, Dinner)
-        }
     }
 }

@@ -1,6 +1,7 @@
 package com.michaeldang.countingcalories.database
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import com.michaeldang.countingcalories.roundNearestDay
@@ -24,4 +25,7 @@ abstract class CaloriesDao {
 
     @Insert
     abstract fun insertEntry(entry: CaloriesEntriesEntity)
+
+    @Delete
+    abstract fun removeEntry(entry: CaloriesEntriesEntity)
 }

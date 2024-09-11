@@ -7,11 +7,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.michaeldang.countingcalories.R
 import com.michaeldang.countingcalories.database.CaloriesEntriesEntity
-import com.michaeldang.countingcalories.database.CaloriesEntriesEntityDummy
-import com.michaeldang.countingcalories.feat.entries.CaloriesEntriesViewModel.FoodPeriod.Companion.FOOD_PERIODS
-import java.time.LocalDate
 
-class CaloriesEntriesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class CaloriesEntriesAdapter(val confirmDeleteEntry: ConfirmDeleteEntry) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     val entries: MutableList<CaloriesEntriesEntity> = mutableListOf()
 
@@ -21,9 +18,8 @@ class CaloriesEntriesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         notifyDataSetChanged()
     }
 
-    fun addEntries(entriesToAdd: List<CaloriesEntriesEntity>) {
-        entries.addAll(entriesToAdd)
-        notifyDataSetChanged()
+    fun removeEntry(entry: CaloriesEntriesEntity) {
+        entries.remove(entry)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -47,9 +43,8 @@ class CaloriesEntriesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (entries[position] is CaloriesEntriesEntityDummy) RowType.FoodPeriodLabel.id else RowType.Entry.id
+        return RowType.Entry.id
     }
-
 
     enum class RowType(val id: Int) {
         Entry(0),
@@ -62,8 +57,12 @@ class CaloriesEntriesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is CaloriesEntriesViewHolder) {
-            val label = entries[position].label ?: "Quick add"
-            holder.caloriesAmountView.text = label + ": " + entries[position].calories.toString()
+            val label = entries[position].label.takeIf { it?.isEmpty() == false } ?: "Item"
+            holder.caloriesAmountView.text = holder.caloriesAmountView.context.getString(R.string.label_and_amount, label, entries[position].calories)
+            holder.caloriesAmountView.setOnLongClickListener { view ->
+                confirmDeleteEntry(entries[position])
+                true
+            }
         } else if (holder is CaloriesEntriesLabelViewHolder) {
             holder.labelView.text = entries[position].foodPeriod.name
         }
@@ -76,4 +75,8 @@ class CaloriesEntriesViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
 class CaloriesEntriesLabelViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     val labelView: TextView = view.findViewById(R.id.label)
+}
+
+fun interface ConfirmDeleteEntry {
+    operator fun invoke(entry: CaloriesEntriesEntity)
 }

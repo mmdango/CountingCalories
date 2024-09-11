@@ -13,10 +13,11 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
+import com.michaeldang.countingcalories.database.CaloriesEntriesEntity
 import com.michaeldang.countingcalories.databinding.EntriesFragmentBinding
 import java.time.format.DateTimeFormatter
 
-class CaloriesEntriesFragment : Fragment() {
+class CaloriesEntriesFragment : Fragment(), ConfirmDeleteEntry {
 
     lateinit var breakfastAdapter: CaloriesEntriesAdapter
     lateinit var lunchAdapter: CaloriesEntriesAdapter
@@ -89,14 +90,14 @@ class CaloriesEntriesFragment : Fragment() {
             }
         }
 
-        breakfastAdapter = CaloriesEntriesAdapter()
+        breakfastAdapter = CaloriesEntriesAdapter(this)
         binding.breakfastCaloriesView.adapter = breakfastAdapter
         binding.breakfastCaloriesView.layoutManager = LinearLayoutManager(context)
 
-        lunchAdapter = CaloriesEntriesAdapter()
+        lunchAdapter = CaloriesEntriesAdapter(this)
         binding.lunchCaloriesView.adapter = lunchAdapter
         binding.lunchCaloriesView.layoutManager = LinearLayoutManager(context)
-        dinnerAdapter = CaloriesEntriesAdapter()
+        dinnerAdapter = CaloriesEntriesAdapter(this)
         binding.dinnerCaloriesView.adapter = dinnerAdapter
         binding.dinnerCaloriesView.layoutManager = LinearLayoutManager(context)
     }
@@ -136,5 +137,13 @@ class CaloriesEntriesFragment : Fragment() {
     private fun loadNextDate() {
         viewModel.nextDate()
 
+    }
+
+    override fun invoke(entry: CaloriesEntriesEntity) {
+        val fragment = ConfirmDeleteDialogFragment()
+        fragment.arguments = Bundle().apply {
+            putParcelable(ENTRY_ARG_KEY, entry)
+        }
+        childFragmentManager.beginTransaction().add(fragment, "confirm_delete").commit()
     }
 }
