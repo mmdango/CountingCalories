@@ -14,8 +14,6 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.google.firebase.storage.StorageReference
-import com.google.firebase.storage.ktx.component1
-import com.google.firebase.storage.ktx.component2
 import com.michaeldang.countingcalories.PreferencesImpl
 import com.michaeldang.countingcalories.R
 import com.michaeldang.countingcalories.fstorage.CloudStorageImpl
@@ -33,19 +31,19 @@ class CaloriesDashboardFragment : Fragment() {
         val view = inflater.inflate(R.layout.dashboard_fragment, container, false)
         imageViewPager = view.findViewById(R.id.progress_pics_view_pager)
         val imageViewPagerAdapter = ImageViewPagerAdapter(requireContext())
-        val userImageRef = CloudStorageImpl.storage.reference.root.child("images/${
-            PreferencesImpl.getUserId(requireContext())
-        }")
+//        val userImageRef = CloudStorageImpl.storage.reference.root.child("images/${
+//            PreferencesImpl.getUserId(requireContext())
+//        }")
 
-        userImageRef.listAll()
-            .addOnSuccessListener { (items, prefixes) ->
-                imageViewPagerAdapter.imageList = items
-                imageViewPagerAdapter.notifyDataSetChanged()
-            }
-            .addOnFailureListener {
-                Toast.makeText(context, "Failed to find items for user.", Toast.LENGTH_SHORT)
-                    .show()
-            }
+//        userImageRef.listAll()
+//            .addOnSuccessListener { (items, prefixes) ->
+//                imageViewPagerAdapter.imageList = items
+//                imageViewPagerAdapter.notifyDataSetChanged()
+//            }
+//            .addOnFailureListener {
+//                Toast.makeText(context, "Failed to find items for user.", Toast.LENGTH_SHORT)
+//                    .show()
+//            }
 
         imageViewPager.adapter = imageViewPagerAdapter
         return view

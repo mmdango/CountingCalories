@@ -23,9 +23,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.StorageReference
-import com.google.firebase.storage.ktx.storage
 import com.michaeldang.countingcalories.PreferencesImpl
 import com.michaeldang.countingcalories.R
 import com.michaeldang.countingcalories.fstorage.CloudStorageImpl
@@ -163,13 +161,13 @@ class MeasurementsFragment : Fragment() {
     fun uploadPhoto(uri: Uri, fileName: String) {
         val photoRef = createPhotoRef(fileName)
         val uploadTask = photoRef.putFile(uri)
-        uploadTask.addOnFailureListener { exception ->
-            Toast.makeText(requireContext(), exception.message, Toast.LENGTH_SHORT).show()
-        }.addOnSuccessListener { snapshot ->
-            context?.let {
-                Toast.makeText(it, "Success", Toast.LENGTH_SHORT).show()
-            }
-        }
+//        uploadTask.addOnFailureListener { exception ->
+//            Toast.makeText(requireContext(), exception.message, Toast.LENGTH_SHORT).show()
+//        }.addOnSuccessListener { snapshot ->
+//            context?.let {
+//                Toast.makeText(it, "Success", Toast.LENGTH_SHORT).show()
+//            }
+//        }
     }
 
     fun getUserId(): String? {

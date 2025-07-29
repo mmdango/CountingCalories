@@ -2,10 +2,8 @@ package com.michaeldang.countingcalories.fstorage
 
 import android.content.Context
 import android.widget.Toast
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
-import com.google.firebase.storage.ktx.component1
-import com.google.firebase.storage.ktx.component2
+import com.google.firebase.Firebase
+import com.google.firebase.storage.storage
 import com.michaeldang.countingcalories.PreferencesImpl.getUserId
 
 // TODO: Dagger
@@ -18,9 +16,9 @@ object CloudStorageImpl {
         var allItems: List<String> = emptyList()
 
         userImageRef.listAll()
-            .addOnSuccessListener { (items, prefixes) ->
-                allItems = items.map { it.path }
-            }
+//            .addOnSuccessListener { (items) ->
+//                allItems = items.map { it.path }
+//            }
             .addOnFailureListener {
                 Toast.makeText(context, "Failed to find items for user.", Toast.LENGTH_SHORT)
                     .show()
