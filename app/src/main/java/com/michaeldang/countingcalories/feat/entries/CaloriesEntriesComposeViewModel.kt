@@ -1,6 +1,7 @@
 package com.michaeldang.countingcalories.feat.entries
 
 import android.content.SharedPreferences
+import androidx.core.content.edit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.michaeldang.countingcalories.database.CaloriesDao
@@ -15,7 +16,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
 import javax.inject.Inject
-import androidx.core.content.edit
 
 @HiltViewModel
 class CaloriesEntriesComposeViewModel @Inject constructor(

@@ -2,36 +2,39 @@
 
 package com.michaeldang.countingcalories.feat.entries
 
-import androidx.compose.foundation.Indication
-import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -43,9 +46,9 @@ fun CaloriesEntriesScreen(
     date: LocalDate,
     onPrevDateClicked: () -> Unit,
     onNextDateClicked: () -> Unit,
-    currentTotal: Int,
-    maxTotal: Int,
-    updateMaxCalories: (Int) -> Unit,
+    currentCalories: Int,
+    totalCalories: Int,
+    updateTotalCalories: (Int) -> Unit,
     breakfastEntries: MealEntries,
     lunchEntries: MealEntries,
     dinnerEntries: MealEntries
@@ -59,8 +62,20 @@ fun CaloriesEntriesScreen(
     var showEditMaxCaloriesSheet by remember { mutableStateOf(false) }
     Column(modifier = modifier) {
         // Note: date and callbacks need to be provided here to compile correctly
-        DateNavigationRow(date = date, onPrevClick = onPrevDateClicked, onNextClick = onNextDateClicked)
-        CaloriesTotal(Modifier.defaultMinSize(minHeight = 150.dp).fillMaxWidth(), currentTotal, maxTotal, { showEditMaxCaloriesSheet = true })
+        DateNavigationRow(
+            modifier = Modifier.padding(8.dp),
+            date = date,
+            onPrevClick = onPrevDateClicked,
+            onNextClick = onNextDateClicked
+        )
+        CaloriesTotal(
+            Modifier
+                .defaultMinSize(minHeight = 150.dp)
+                .fillMaxWidth(),
+            currentCalories,
+            totalCalories,
+            { showEditMaxCaloriesSheet = true }
+        )
         EntryInputRow(onEntryAdded = onAddClicked)
 
         PeriodSelectorRowAndEntries(
@@ -75,7 +90,7 @@ fun CaloriesEntriesScreen(
         EditMaxCalories(
             modifier,
             onDismissed = { showEditMaxCaloriesSheet = false },
-            onSavedClick = { updateMaxCalories(it) }
+            onSavedClick = { updateTotalCalories(it) }
         )
     }
 }
@@ -86,7 +101,10 @@ fun DateNavigationRow(modifier: Modifier = Modifier, date: LocalDate, onPrevClic
     val formattedDate = remember(date) {
         dateFormatter.format(date)
     }
-    Row(modifier = modifier) {
+    Row(
+        modifier = modifier.height(IntrinsicSize.Min),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         Button(
             onClick = onPrevClick
         ) {
@@ -94,6 +112,8 @@ fun DateNavigationRow(modifier: Modifier = Modifier, date: LocalDate, onPrevClic
         }
         Text(
             text = formattedDate,
+            textAlign = TextAlign.Center,
+            fontSize = 24.sp,
             modifier = Modifier.weight(1f)
         )
         Button(
@@ -105,9 +125,9 @@ fun DateNavigationRow(modifier: Modifier = Modifier, date: LocalDate, onPrevClic
 }
 
 @Composable
-fun CaloriesTotal(modifier: Modifier = Modifier, currentTotal: Int, maxTotal: Int, onLongClick: () -> Unit) {
-    val percentConsumed = currentTotal.toDouble() / maxTotal
-    val remaining = maxTotal - currentTotal
+fun CaloriesTotal(modifier: Modifier = Modifier, currentCalories: Int, maxCalories: Int, onLongClick: () -> Unit) {
+    val percentConsumed = currentCalories.toDouble() / maxCalories
+    val remaining = maxCalories - currentCalories
     Box(
         modifier = modifier.combinedClickable(
             interactionSource = null,
@@ -119,7 +139,8 @@ fun CaloriesTotal(modifier: Modifier = Modifier, currentTotal: Int, maxTotal: In
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
-                text = "$currentTotal / $maxTotal",
+                text = "$currentCalories / $maxCalories",
+                fontSize = 24.sp,
                 color = when (percentConsumed) {
                     in 0.0..0.5 -> Color.Green
                     in 0.5..1.0 -> Color.Yellow
@@ -127,7 +148,8 @@ fun CaloriesTotal(modifier: Modifier = Modifier, currentTotal: Int, maxTotal: In
                 }
             )
             Text(
-                "$remaining remaining"
+                text = "$remaining remaining",
+                fontSize = 24.sp,
             )
         }
     }
@@ -136,8 +158,9 @@ fun CaloriesTotal(modifier: Modifier = Modifier, currentTotal: Int, maxTotal: In
 @Composable
 fun EntryInputRow(modifier: Modifier = Modifier, onEntryAdded: suspend (Int, String?) -> Boolean) {
     Row(
-        modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically
+        modifier = modifier.padding(8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         val amountTextState = rememberTextFieldState()
         val labelTextState = rememberTextFieldState()
@@ -182,7 +205,8 @@ fun PeriodSelectorRowAndEntries(
     val radioOptions = listOf(breakfastEntries, lunchEntries, dinnerEntries)
     Row(modifier = modifier) {
         radioOptions.forEach { mealEntries ->
-            Column(modifier = Modifier.weight(1f)) {
+            Column(modifier = Modifier.weight(1f).padding(4.dp),
+                horizontalAlignment = Alignment.CenterHorizontally) {
                 PeriodButton(selected = mealEntries.foodPeriod == selectedOption, foodPeriod = mealEntries.foodPeriod, onSelected = onOptionSelected)
                 EntriesColumn(mealEntries = mealEntries)
             }
@@ -197,20 +221,25 @@ fun PeriodButton(
     foodPeriod: CaloriesEntriesViewModel.FoodPeriod,
     onSelected: (CaloriesEntriesViewModel.FoodPeriod) -> Unit
 ) {
-    val buttonColor = if (selected) 0xFFAAAAAA else 0xFF444444
+    val buttonColor = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondaryContainer
     Button(
-        modifier = modifier.padding(16.dp).background(color = Color(buttonColor), shape = RoundedCornerShape(16.dp)),
+        modifier = modifier,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = buttonColor
+        ),
         onClick = { onSelected(foodPeriod) },
     ) {
         Text(
             text = foodPeriod.name,
+            maxLines = 1,
+            softWrap = false
         )
     }
 }
 
 @Composable
 fun EntriesColumn(modifier: Modifier = Modifier, mealEntries: MealEntries) {
-    LazyColumn(modifier = modifier) {
+    LazyColumn(modifier = modifier.fillMaxWidth()) {
         items(mealEntries.calorieEntries.size) { idx ->
             Text(mealEntries.calorieEntries[idx].toString())
         }

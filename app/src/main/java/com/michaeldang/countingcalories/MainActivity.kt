@@ -1,7 +1,6 @@
 package com.michaeldang.countingcalories
 
 import android.os.Bundle
-import android.widget.FrameLayout
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.padding
@@ -14,12 +13,8 @@ import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
-import com.google.android.material.navigation.NavigationBarView
-import com.michaeldang.countingcalories.feat.dashboard.CaloriesDashboardFragment
 import com.michaeldang.countingcalories.feat.entries.CaloriesEntriesComposeViewModel
-import com.michaeldang.countingcalories.feat.entries.CaloriesEntriesFragment
 import com.michaeldang.countingcalories.feat.entries.CaloriesEntriesScreen
-import com.michaeldang.countingcalories.feat.measurements.MeasurementsFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.serialization.Serializable
 
@@ -41,23 +36,23 @@ class MainActivity : AppCompatActivity() {
                             is Entries -> {
                                 NavEntry(key) {
                                     val composeViewModel: CaloriesEntriesComposeViewModel = hiltViewModel()
-                                    val maxTotal = composeViewModel.totalCalories.collectAsStateWithLifecycle()
-                                    val currentTotal = composeViewModel.currentCalories.collectAsStateWithLifecycle()
+                                    val totalCalories = composeViewModel.totalCalories.collectAsStateWithLifecycle()
+                                    val currentCalories = composeViewModel.currentCalories.collectAsStateWithLifecycle()
                                     val allMealEntries = composeViewModel.allMealEntries.collectAsStateWithLifecycle()
                                     val date = composeViewModel.selectedDate.collectAsStateWithLifecycle()
 
                                     CaloriesEntriesScreen(
                                         modifier = Modifier.padding(innerPadding),
                                         onEntryAdded = { amount, label, foodPeriod -> composeViewModel.addEntry(amount, label, foodPeriod) },
-                                        currentTotal = currentTotal.value,
-                                        maxTotal = maxTotal.value,
+                                        currentCalories = currentCalories.value,
+                                        totalCalories = totalCalories.value,
                                         breakfastEntries = allMealEntries.value.breakfastEntries,
                                         lunchEntries = allMealEntries.value.lunchEntries,
                                         dinnerEntries = allMealEntries.value.dinnerEntries,
                                         date = date.value,
                                         onNextDateClicked = { composeViewModel.onNextDateClicked() },
                                         onPrevDateClicked = { composeViewModel.onPrevDateClicked() },
-                                        updateMaxCalories = { composeViewModel.updateTotalCalories(it) }
+                                        updateTotalCalories = { composeViewModel.updateTotalCalories(it) }
                                     )
                                 }
                             }
