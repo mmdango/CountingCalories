@@ -2,6 +2,10 @@
 
 package com.michaeldang.countingcalories.feat.entries
 
+import android.R
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -9,6 +13,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -90,7 +95,10 @@ fun CaloriesEntriesScreen(
         EditMaxCalories(
             modifier,
             onDismissed = { showEditMaxCaloriesSheet = false },
-            onSavedClick = { updateTotalCalories(it) }
+            onSavedClick = {
+                updateTotalCalories(it)
+                showEditMaxCaloriesSheet = false
+            }
         )
     }
 }
@@ -141,15 +149,15 @@ fun CaloriesTotal(modifier: Modifier = Modifier, currentCalories: Int, maxCalori
             Text(
                 text = "$currentCalories / $maxCalories",
                 fontSize = 24.sp,
+            )
+            Text(
+                text = "$remaining remaining",
+                fontSize = 24.sp,
                 color = when (percentConsumed) {
                     in 0.0..0.5 -> Color.Green
                     in 0.5..1.0 -> Color.Yellow
                     else -> Color.Red
                 }
-            )
-            Text(
-                text = "$remaining remaining",
-                fontSize = 24.sp,
             )
         }
     }
@@ -205,8 +213,19 @@ fun PeriodSelectorRowAndEntries(
     val radioOptions = listOf(breakfastEntries, lunchEntries, dinnerEntries)
     Row(modifier = modifier) {
         radioOptions.forEach { mealEntries ->
-            Column(modifier = Modifier.weight(1f).padding(4.dp),
-                horizontalAlignment = Alignment.CenterHorizontally) {
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxSize()
+                    .border(
+                        BorderStroke(
+                            width = 1.dp,
+                            color = MaterialTheme.colorScheme.secondaryContainer
+                        )
+                    )
+                    .padding(4.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 PeriodButton(selected = mealEntries.foodPeriod == selectedOption, foodPeriod = mealEntries.foodPeriod, onSelected = onOptionSelected)
                 EntriesColumn(mealEntries = mealEntries)
             }
@@ -241,7 +260,14 @@ fun PeriodButton(
 fun EntriesColumn(modifier: Modifier = Modifier, mealEntries: MealEntries) {
     LazyColumn(modifier = modifier.fillMaxWidth()) {
         items(mealEntries.calorieEntries.size) { idx ->
-            Text(mealEntries.calorieEntries[idx].toString())
+            val isEven = idx % 2 == 0
+            val backgroundColor = if (isEven) MaterialTheme.colorScheme.tertiaryContainer else MaterialTheme.colorScheme.background
+            Text(
+                text = mealEntries.calorieEntries[idx].toString(),
+                fontSize = 18.sp,
+                modifier = Modifier.fillMaxWidth().background(color = backgroundColor)
+            )
+            // TODO How to add a label nicely? Columns are a bit too narrow.
         }
     }
 }
@@ -249,23 +275,28 @@ fun EntriesColumn(modifier: Modifier = Modifier, mealEntries: MealEntries) {
 @Composable
 fun EditMaxCalories(modifier: Modifier = Modifier, onDismissed: () -> Unit, onSavedClick: (Int) -> Unit) {
     ModalBottomSheet(
+        modifier = modifier,
         onDismissRequest = onDismissed,
     ) {
         val (newMaxCalories, onTextUpdated) = remember { mutableStateOf("") }
         Column(
             modifier = Modifier.defaultMinSize(64.dp)
         ) {
-            TextField(newMaxCalories, onTextUpdated)
+            TextField(
+                newMaxCalories,
+                onTextUpdated,
+                label = { Text("New max calories...") }
+            )
             Row {
                 Button(
                     modifier = Modifier.weight(1f),
-                    onClick = { onSavedClick(newMaxCalories.toInt()) }
+                    onClick = onDismissed
                 ) {
                     Text(text = "Cancel")
                 }
                 Button(
                     modifier = Modifier.weight(1f),
-                    onClick = onDismissed
+                    onClick = { onSavedClick(newMaxCalories.toInt()) }
                 ) {
                     Text(text = "Save")
                 }
