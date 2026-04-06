@@ -1,52 +1,75 @@
 package com.michaeldang.countingcalories
 
 import android.os.Bundle
-import android.view.Menu
 import android.widget.FrameLayout
+import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.ui.Modifier
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation3.runtime.NavEntry
+import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.rememberNavBackStack
+import androidx.navigation3.ui.NavDisplay
 import com.google.android.material.navigation.NavigationBarView
 import com.michaeldang.countingcalories.feat.dashboard.CaloriesDashboardFragment
+import com.michaeldang.countingcalories.feat.entries.CaloriesEntriesComposeViewModel
 import com.michaeldang.countingcalories.feat.entries.CaloriesEntriesFragment
+import com.michaeldang.countingcalories.feat.entries.CaloriesEntriesScreen
 import com.michaeldang.countingcalories.feat.measurements.MeasurementsFragment
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.serialization.Serializable
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-    private lateinit var frameLayout: FrameLayout
-    private val onNavigationItemSelectedListener = NavigationBarView.OnItemSelectedListener { item ->
-        when (item.itemId) {
-            R.id.navigation_home -> {
-                supportFragmentManager.beginTransaction().replace(R.id.frame_layout,
-                    CaloriesEntriesFragment()
-                ).commit()
-                return@OnItemSelectedListener true
-            }
-            R.id.navigation_dashboard -> {
-                supportFragmentManager.beginTransaction().replace(R.id.frame_layout,
-                    CaloriesDashboardFragment()
-                ).commit()
-                return@OnItemSelectedListener true
-            }
-            R.id.navigation_measurements -> {
-                supportFragmentManager.beginTransaction().replace(R.id.frame_layout,
-                    MeasurementsFragment()
-                ).commit()
-                return@OnItemSelectedListener true
-            }
-        }
-        false
-    }
+    @Serializable
+    object Entries: NavKey
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        val navView: NavigationBarView = findViewById(R.id.nav_view)
+        setContent {
+            val backStack = rememberNavBackStack(Entries)
+            Scaffold { innerPadding ->
+                NavDisplay(
+                    backStack = backStack,
+                    onBack = { backStack.remove(backStack.last()) },
+                    entryProvider = { key ->
+                        when(key) {
+                            is Entries -> {
+                                NavEntry(key) {
+                                    val composeViewModel: CaloriesEntriesComposeViewModel = hiltViewModel()
+                                    val maxTotal = composeViewModel.totalCalories.collectAsStateWithLifecycle()
+                                    val currentTotal = composeViewModel.currentCalories.collectAsStateWithLifecycle()
+                                    val allMealEntries = composeViewModel.allMealEntries.collectAsStateWithLifecycle()
+                                    val date = composeViewModel.selectedDate.collectAsStateWithLifecycle()
 
-        navView.setOnItemSelectedListener(onNavigationItemSelectedListener)
-        navView.selectedItemId = R.id.navigation_home
-        frameLayout = findViewById(R.id.frame_layout)
-
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        return super.onCreateOptionsMenu(menu)
+                                    CaloriesEntriesScreen(
+                                        modifier = Modifier.padding(innerPadding),
+                                        onEntryAdded = { amount, label, foodPeriod -> composeViewModel.addEntry(amount, label, foodPeriod) },
+                                        currentTotal = currentTotal.value,
+                                        maxTotal = maxTotal.value,
+                                        breakfastEntries = allMealEntries.value.breakfastEntries,
+                                        lunchEntries = allMealEntries.value.lunchEntries,
+                                        dinnerEntries = allMealEntries.value.dinnerEntries,
+                                        date = date.value,
+                                        onNextDateClicked = { composeViewModel.onNextDateClicked() },
+                                        onPrevDateClicked = { composeViewModel.onPrevDateClicked() },
+                                        updateMaxCalories = { composeViewModel.updateTotalCalories(it) }
+                                    )
+                                }
+                            }
+                            else -> {
+                                NavEntry(key) {
+                                    Text("idk")
+                                }
+                            }
+                        }
+                    }
+                )
+            }
+        }
     }
 }
