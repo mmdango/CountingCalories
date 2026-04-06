@@ -129,6 +129,7 @@ class CaloriesEntriesViewModel(application: Application) : AndroidViewModel(appl
     enum class FoodPeriod(val timeStart: LocalTime, val timeEnd: LocalTime) {
         Breakfast(LocalTime.MIDNIGHT, LocalTime.of(10,30)),
         Lunch(LocalTime.of(10,31), LocalTime.of(15,0)),
-        Dinner(LocalTime.of(15, 1), LocalTime.MAX);
+        Dinner(LocalTime.of(15, 1), LocalTime.MAX),
+        None(LocalTime.MIDNIGHT, LocalTime.MIDNIGHT);
     }
 }

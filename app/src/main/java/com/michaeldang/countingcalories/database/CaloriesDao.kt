@@ -12,20 +12,20 @@ import java.time.LocalDateTime
 @Dao
 abstract class CaloriesDao {
     @Query("SELECT * FROM CaloriesEntriesEntity")
-    abstract fun getAllEntries() : List<CaloriesEntriesEntity>
+    abstract suspend fun getAllEntries() : List<CaloriesEntriesEntity>
 
     @Query("SELECT * FROM CaloriesEntriesEntity WHERE date = :date AND food_period = 'Breakfast'")
-    abstract fun getBreakfastEntriesForDate(date: LocalDate): List<CaloriesEntriesEntity>
+    abstract suspend fun getBreakfastEntriesForDate(date: LocalDate): List<CaloriesEntriesEntity>
 
     @Query("SELECT * FROM CaloriesEntriesEntity WHERE date = :date AND food_period = 'Lunch'")
-    abstract fun getLunchEntriesForDate(date: LocalDate): List<CaloriesEntriesEntity>
+    abstract suspend fun getLunchEntriesForDate(date: LocalDate): List<CaloriesEntriesEntity>
 
     @Query("SELECT * FROM CaloriesEntriesEntity WHERE date = :date AND food_period = 'Dinner'")
-    abstract fun getDinnerEntriesForDate(date: LocalDate): List<CaloriesEntriesEntity>
+    abstract suspend fun getDinnerEntriesForDate(date: LocalDate): List<CaloriesEntriesEntity>
 
     @Insert
-    abstract fun insertEntry(entry: CaloriesEntriesEntity)
+    abstract suspend fun insertEntry(entry: CaloriesEntriesEntity)
 
     @Delete
-    abstract fun removeEntry(entry: CaloriesEntriesEntity)
+    abstract suspend fun removeEntry(entry: CaloriesEntriesEntity)
 }
